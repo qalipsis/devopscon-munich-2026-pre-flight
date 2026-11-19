@@ -1,0 +1,6 @@
+preflight.log
+warmup/build/
+warmup/.gradle/
+warmup/.kotlin/
+.DS_Store
+.idea/
