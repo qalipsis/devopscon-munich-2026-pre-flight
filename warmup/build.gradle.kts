@@ -15,34 +15,14 @@ kotlin {
     jvmToolchain(21)
 }
 
-// The Docker image of QALIPSIS (src/main/docker) also stores its meters and events in PostgreSQL, for the
-// data series of its web interface: that needs the TimescaleDB plugin, still a snapshot. The image builds
-// with -PqalipsisImage=true; the gates of the attendees build without it, from Maven Central alone.
-val qalipsisImage = providers.gradleProperty("qalipsisImage").map(String::toBoolean).getOrElse(false)
-
-if (qalipsisImage) {
-    repositories {
-        maven("https://maven.qalipsis.com/repository/oss-snapshots") {
-            name = "qalipsis-oss-snapshots"
-            mavenContent { snapshotsOnly() }
-            // The snapshot plugin depends on the snapshot plugin platform, of group io.qalipsis.
-            content {
-                includeGroup("io.qalipsis.plugin")
-                includeGroup("io.qalipsis")
-            }
-        }
-    }
-}
-
 qalipsis {
     plugins {
         http()
         apacheKafka()
         sql()
         influxDb()
-        if (qalipsisImage) {
-            timescaleDb("0.18.4-SNAPSHOT")
-        }
+        // Meters and events in PostgreSQL, for the data series of the web interface of the QALIPSIS image.
+        timescaleDb()
     }
 }
 
