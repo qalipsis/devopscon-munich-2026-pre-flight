@@ -20,6 +20,7 @@ It takes 10 to 30 minutes, depending on your network. You only need Docker.
   - macOS and Linux: the normal terminal.
   - Windows: **Git Bash** (installed with [Git for Windows](https://git-scm.com/download/win)) or a
     **WSL2** terminal.
+- **On Windows, PowerShell** as well: Windows PowerShell 5.1, which comes with Windows, or PowerShell 7.
 - **Git**, to download this repository.
 
 Java is not needed. If you have it, it is used; if not, a container does the work.
@@ -32,7 +33,7 @@ cd devopscon-munich-2026-pre-flight
 ./preflight.sh
 ```
 
-The script has four steps. Before each step, it explains **why** the step is needed, **what** it does,
+The script has five steps. Before each step, it explains **why** the step is needed, **what** it does,
 and **what it means for you**. Then you decide:
 
 - press **Enter** to run the step,
@@ -42,14 +43,15 @@ and **what it means for you**. Then you decide:
 At the end, a summary shows the result of each step. The script writes everything it shows into the
 file `preflight.log`. If something goes wrong, send this file with your question.
 
-## The four steps
+## The five steps
 
 | Step | Why | What it does | What it means for you |
 |---|---|---|---|
-| 1. Check your computer | To find problems at home, where you have time to fix them. | Checks Docker, Docker Compose, the memory and disk space of Docker, the network ports of the workshop, and the connection to the download servers. | Nothing is installed or changed. One very small image (busybox, about 2 MB) is downloaded to measure the disk space. |
+| 1. Check your computer | To find problems at home, where you have time to fix them. | Checks Docker, Docker Compose, the memory and disk space of Docker, the network ports of the workshop, the connection to the download servers and, on Windows, PowerShell. | Nothing is installed or changed. One very small image (busybox, about 2 MB) is downloaded to measure the disk space. |
 | 2. Terms of the workshop images | Three images are not open source. They are lent to you for the workshop only. | Shows the main points of the [terms](#terms-of-the-workshop-images) and asks if you accept them. | If you accept, you may use these images only for the workshop and you may not pass them on. If not, they are not downloaded. |
 | 3. Download the images | The images are large and the room network is slow. | Runs `docker pull` for each image of [`images.lock`](images.lock). Among them is *act*, which runs a GitHub Actions workflow on your computer in the last exercise, so you do not have to install it. | Docker uses about 8 GB of disk space more. |
 | 4. Prepare Gradle | The workshop compiles test scenarios with Gradle. The first build downloads a lot. | Builds a small project in [`warmup/`](warmup) with exactly the same tools and libraries as the workshop. | Up to 1 GB, in the folder `.gradle` of your home folder if you have Java, or in the Docker volume `workshop-gradle-cache` if you do not. |
+| 5. Get the workshop repository | On the day, everything starts from it. | Downloads it next to this folder, on its start branch. If it is not published yet, it says so. | A folder `devopscon-munich-2026` next to this one, a few MB. |
 
 Each step is also a script of its own, which you can run alone:
 
@@ -57,7 +59,17 @@ Each step is also a script of its own, which you can run alone:
 scripts/check.sh                   # step 1
 scripts/pull.sh --accept-terms     # step 3; --accept-terms means you accept the terms of step 2
 scripts/warmup.sh                  # step 4
+scripts/clone.sh                   # step 5, also on the day if the repository was not published yet
 ```
+
+On the day, start from the workshop repository:
+
+```shell
+cd ../devopscon-munich-2026
+./up.sh
+```
+
+Then open the wizard, <http://localhost:1313>: it leads you through the whole workshop.
 
 Without questions: `./preflight.sh --yes --accept-terms`. The terms are never accepted by `--yes` alone.
 
@@ -66,7 +78,8 @@ Without questions: `./preflight.sh --yes --accept-terms`. The terms are never ac
 - They send nothing about you or your computer anywhere. They only download.
 - They do not install anything outside Docker, except the Gradle files of step 4 in your `.gradle`
   folder. They need no administrator rights.
-- They do not show the content of the workshop: that comes on the day.
+- They do not show the exercises: the workshop repository of step 5 is only the start point, and each
+  unit brings its part on the day.
 
 ## After the workshop
 
@@ -76,6 +89,8 @@ To free the disk space, delete what the workshop used:
 docker image rm $(awk '!/^#/ { print $2 }' images.lock) busybox:1.37
 docker volume rm workshop-gradle-cache
 ```
+
+And delete the folder `devopscon-munich-2026` next to this one.
 
 The Gradle files in the `.gradle` folder of your home folder are shared with your other Gradle projects.
 Delete them only if you do not use Gradle otherwise.
@@ -168,5 +183,6 @@ itself are authoritative.
 | `danielqsj/kafka-exporter:v1.11.0` | Kafka Exporter | Apache-2.0 | <https://github.com/danielqsj/kafka_exporter> |
 | `jaegertracing/jaeger:2.23.0` | Jaeger | Apache-2.0 | <https://github.com/jaegertracing/jaeger> |
 | `eclipse-temurin:21-jdk` | Eclipse Temurin (OpenJDK), runs Gradle in `./gate.sh` | GPL-2.0 with Classpath Exception | <https://adoptium.net/> |
+| `ghcr.io/gohugoio/hugo` | Hugo, serves the step-by-step pages of the workshop | Apache-2.0 | <https://github.com/gohugoio/hugo> |
 | `catthehacker/ubuntu:act-latest` | Ubuntu-based runner of the local pipeline | MIT (image definition), Ubuntu packages under their own licences | <https://github.com/catthehacker/docker_images> |
 | `busybox:1.37` | BusyBox, measures the free disk space in step 1 | GPL-2.0 | <https://busybox.net> |

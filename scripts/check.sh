@@ -9,7 +9,7 @@ MIN_MEMORY_GIB=5
 # Images, act, Gradle and the data of the sandbox during the workshop, with a margin.
 MIN_DISK_GIB=15
 # Ports the sandbox opens on this computer during the workshop.
-PORTS=(5432 4317 4318 8080 8081 8082 8086 8400 9094 9308 16686)
+PORTS=(1313 5432 4317 4318 8080 8081 8082 8086 8400 9094 9308 16686)
 # Small image (about 2 MB) that measures the free disk space inside Docker.
 DISK_PROBE_IMAGE=busybox:1.37
 # Servers the next steps download from.
@@ -109,6 +109,28 @@ check_servers() {
   done
 }
 
+# Windows only, in Git Bash or WSL2: the workshop needs PowerShell next to Bash.
+running_on_windows() {
+  case "$(uname -s)" in
+    MINGW* | MSYS* | CYGWIN*) return 0 ;;
+  esac
+  grep -qi microsoft /proc/version 2>/dev/null
+}
+
+check_powershell() {
+  running_on_windows || return 0
+  local shell version
+  for shell in pwsh pwsh.exe powershell.exe powershell; do
+    command -v "$shell" >/dev/null 2>&1 || continue
+    version="$("$shell" -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()' 2>/dev/null | tr -d '\r')"
+    if [[ -n "$version" ]]; then
+      ok "PowerShell $version is installed ($shell)."
+      return 0
+    fi
+  done
+  failed "PowerShell is not found. Install it: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows"
+}
+
 check_java() {
   local major
   major="$(java_major)"
@@ -128,6 +150,7 @@ main() {
   fi
   check_ports
   check_servers
+  check_powershell
   check_java
 
   info ""

@@ -20,7 +20,7 @@ ACCEPT_TERMS=false
 TERMS_ACCEPTED=false
 STEP_NAMES=()
 STEP_RESULTS=()
-TOTAL_STEPS=4
+TOTAL_STEPS=5
 CURRENT_STEP=0
 
 usage() {
@@ -96,7 +96,8 @@ step_check() {
   explain "Why" "The workshop runs everything on your computer, in Docker. This step finds problems"
   explain "" "now, at home, where you have time to fix them, and not in the room."
   explain "What" "It checks Docker, Docker Compose, the memory and disk space of Docker, the network"
-  explain "" "ports the workshop uses, and the connection to the servers of the next steps."
+  explain "" "ports the workshop uses, the connection to the servers of the next steps and, on"
+  explain "" "Windows, PowerShell."
   explain "For you" "Nothing is installed and nothing is changed. Only one very small image (busybox,"
   explain "" "about 2 MB) is downloaded, to measure the free disk space."
   if confirm_step; then run_step "$ROOT_DIR/scripts/check.sh"; else record skipped; fi
@@ -180,6 +181,16 @@ step_gradle() {
   if confirm_step; then run_step "$ROOT_DIR/scripts/warmup.sh"; else record skipped; fi
 }
 
+step_clone() {
+  start_step "Get the workshop repository"
+  explain "Why" "On the day, everything starts from this repository. Downloaded now, you are ready"
+  explain "" "the moment the workshop begins."
+  explain "What" "It downloads the workshop repository next to this folder, on its start branch."
+  explain "" "If it is not published yet, it says so: run scripts/clone.sh again on the day."
+  explain "For you" "A folder devopscon-munich-2026 next to this one, a few MB."
+  if confirm_step; then run_step "$ROOT_DIR/scripts/clone.sh"; else record skipped; fi
+}
+
 finish() {
   local how="${1:-completed}" index
   printf '\n%s======== Summary ========%s\n\n' "$BOLD" "$RESET"
@@ -217,6 +228,7 @@ main() {
   step_terms
   step_pull
   step_gradle
+  step_clone
   finish
 }
 

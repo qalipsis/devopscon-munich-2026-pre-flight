@@ -3,6 +3,7 @@
 sandbox apache/kafka-native:4.1.2
 sandbox apache/kafka:4.1.2
 sandbox danielqsj/kafka-exporter:v1.11.0
+sandbox ghcr.io/gohugoio/hugo@sha256:7bb99a126eddeea8fbfaacedc5ef6708805411bdeaa01e668405a137fd02d048
 platform ghcr.io/qalipsis/workshop-platform-chaos-board@sha256:28513f2e63b9c5c0a46b53388d1c3f37b7a6d52343662d9300bc96ae9a8e729b
 platform ghcr.io/qalipsis/workshop-platform-ingest@sha256:a29a6dca07ea0aea512779c543d90673348f95ad40dbc8fd09777b4d06559595
 platform ghcr.io/qalipsis/workshop-platform-persister@sha256:b494388e971274d67ae957aab4e9ca18a226147b70ed3552e565d9c4b708acfe
