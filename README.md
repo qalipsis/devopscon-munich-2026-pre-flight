@@ -3,7 +3,7 @@
 Prepare your computer for the workshop **"From Green Build to Broken Peak"**, at home, before the day.
 
 The workshop runs a complete system on your computer: services, Kafka, a database, monitoring, and the
-load-testing tool QALIPSIS. All of it comes as Docker images, about 7 GB. The network of a conference
+load-testing tool QALIPSIS. All of it comes as Docker images, about 8 GB. The network of a conference
 room is slow and shared by everybody. So please download everything at home, with this repository.
 
 It takes 10 to 30 minutes, depending on your network. You only need Docker.
@@ -48,7 +48,7 @@ file `preflight.log`. If something goes wrong, send this file with your question
 |---|---|---|---|
 | 1. Check your computer | To find problems at home, where you have time to fix them. | Checks Docker, Docker Compose, the memory and disk space of Docker, the network ports of the workshop, and the connection to the download servers. | Nothing is installed or changed. One very small image (busybox, about 2 MB) is downloaded to measure the disk space. |
 | 2. Terms of the workshop images | Three images are not open source. They are lent to you for the workshop only. | Shows the main points of the [terms](#terms-of-the-workshop-images) and asks if you accept them. | If you accept, you may use these images only for the workshop and you may not pass them on. If not, they are not downloaded. |
-| 3. Download the images | The images are large and the room network is slow. | Runs `docker pull` for each image of [`images.lock`](images.lock). Among them is *act*, which runs a GitHub Actions workflow on your computer in the last exercise, so you do not have to install it. | Docker uses about 7 GB of disk space more. |
+| 3. Download the images | The images are large and the room network is slow. | Runs `docker pull` for each image of [`images.lock`](images.lock). Among them is *act*, which runs a GitHub Actions workflow on your computer in the last exercise, so you do not have to install it. | Docker uses about 8 GB of disk space more. |
 | 4. Prepare Gradle | The workshop compiles test scenarios with Gradle. The first build downloads a lot. | Builds a small project in [`warmup/`](warmup) with exactly the same tools and libraries as the workshop. | Up to 1 GB, in the folder `.gradle` of your home folder if you have Java, or in the Docker volume `workshop-gradle-cache` if you do not. |
 
 Each step is also a script of its own, which you can run alone:
@@ -145,7 +145,7 @@ under the licences of their components.
 
 | Image | Content | Licences | Source |
 |---|---|---|---|
-| `ghcr.io/qalipsis/devopscon-munich-2026-qalipsis` (used during the workshop, not downloaded by this pre-flight) | QALIPSIS runtime and web interface | AGPL-3.0 (or a commercial licence from AERIS IT Solutions GmbH) | <https://github.com/qalipsis/qalipsis-oss> |
+| `ghcr.io/qalipsis/workshop-platform-qalipsis` | QALIPSIS runtime and web interface | AGPL-3.0 (or a commercial licence from AERIS IT Solutions GmbH) | <https://github.com/qalipsis/qalipsis-oss> |
 | | QALIPSIS API modules and plugins | Apache-2.0 | <https://github.com/qalipsis/qalipsis-oss>, <https://github.com/qalipsis/qalipsis-plugins> |
 | | The scenarios of the workshop | Apache-2.0 | the workshop repository |
 | | Base image `ghcr.io/qalipsis/base`: Eclipse Temurin 21 on Alpine Linux | GPL-2.0 with Classpath Exception (OpenJDK), and the licences of the Alpine packages | <https://github.com/adoptium/temurin-build> |

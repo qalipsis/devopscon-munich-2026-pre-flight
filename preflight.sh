@@ -12,7 +12,7 @@ set -uo pipefail
 source "$(dirname "$0")/scripts/lib.sh"
 
 # Measured on a clean computer; see README.md.
-IMAGES_DISK="about 7 GB"
+IMAGES_DISK="about 8 GB"
 GRADLE_DISK="up to 1 GB"
 
 ASSUME_YES=false
@@ -209,7 +209,7 @@ main() {
   printf '%sPreparing your computer for the workshop "From Green Build to Broken Peak"%s\n' "$BOLD" "$RESET"
   info "DevOpsCon Munich 2026"
   info ""
-  info "This takes 10 to 30 minutes, depending on your network, and needs about 8 GB of disk space."
+  info "This takes 10 to 30 minutes, depending on your network, and needs about 9 GB of disk space."
   info "There are $TOTAL_STEPS steps. Before each step, you read why it is needed and what it does,"
   info "and you decide: run it, skip it, or stop. You can start this script again at any time."
 
