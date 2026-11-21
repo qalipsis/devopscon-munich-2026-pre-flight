@@ -4,3 +4,7 @@ warmup/.gradle/
 warmup/.kotlin/
 .DS_Store
 .idea/
+jdk/.gradle/
+jdk/build/
+jdk/.kotlin/
+warmup/bin/

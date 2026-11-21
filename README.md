@@ -3,8 +3,8 @@
 Prepare your computer for the workshop **"From Green Build to Broken Peak"**, at home, before the day.
 
 The workshop runs a complete system on your computer: services, Kafka, a database, monitoring, and the
-load-testing tool QALIPSIS. All of it comes as Docker images, about 8 GB. The network of a conference
-room is slow and shared by everybody. So please download everything at home, with this repository.
+load-testing tool. All of it comes as Docker images, about 8 GB. The network of a conference
+room might be slow and is shared by everybody. So please download everything at home, with this repository.
 
 It takes 10 to 30 minutes, depending on your network. You only need Docker.
 
@@ -16,6 +16,18 @@ It takes 10 to 30 minutes, depending on your network. You only need Docker.
   Colima or Docker Engine. On macOS, Windows or Linux, on Intel/AMD or ARM processors.
 - **Docker must be allowed to use at least 5 GB of memory**, and have 15 GB of free disk space.
   In Docker Desktop: *Settings → Resources*.
+- **Up to 1 GB of free disk space outside Docker**, next to this folder:
+
+  | What | Where | Size |
+  |---|---|---|
+  | The workshop repository, its builds and the reports of your runs | the folder `devopscon-munich-2026` (step 5) | up to 500 MB |
+  | Gradle and Java 21, only when Java is installed, for Gradle on your own computer | the folder `.gradle` of your home folder | about 400 MB |
+  | This repository | here | a few MB |
+
+  The Gradle files of the workshop (Gradle, Java 21, the QALIPSIS libraries) go into Docker, in the volume
+  `workshop-gradle-cache`: the workshop runs Gradle in a container, so no Java needs to be installed. The
+  data the sandbox generates during the workshop (Kafka, PostgreSQL, InfluxDB, Jaeger) also stays in Docker:
+  both are part of the 15 GB above.
 - **A terminal that runs Bash:**
   - macOS and Linux: the normal terminal.
   - Windows: **Git Bash** (installed with [Git for Windows](https://git-scm.com/download/win)) or a
@@ -23,7 +35,9 @@ It takes 10 to 30 minutes, depending on your network. You only need Docker.
 - **On Windows, PowerShell** as well: Windows PowerShell 5.1, which comes with Windows, or PowerShell 7.
 - **Git**, to download this repository.
 
-Java is not needed. If you have it, it is used; if not, a container does the work.
+Java is not needed: Gradle and the scenarios run in a container. If you have a Java, of any version, step 4
+also prepares Gradle and Java 21 on your computer, so Gradle can run there too (for example in your IDE);
+a Java 22 or newer is fine, Gradle runs on Java 21 anyway.
 
 ## How to run it
 
@@ -47,10 +61,10 @@ file `preflight.log`. If something goes wrong, send this file with your question
 
 | Step | Why | What it does | What it means for you |
 |---|---|---|---|
-| 1. Check your computer | To find problems at home, where you have time to fix them. | Checks Docker, Docker Compose, the memory and disk space of Docker, the network ports of the workshop, the connection to the download servers and, on Windows, PowerShell. | Nothing is installed or changed. One very small image (busybox, about 2 MB) is downloaded to measure the disk space. |
+| 1. Check your computer | To find problems at home, where you have time to fix them. | Checks Docker, Docker Compose, the memory and disk space of Docker, the free disk space outside Docker, the network ports of the workshop, the connection to the download servers and, on Windows, PowerShell. | Nothing is installed or changed. One very small image (busybox, about 2 MB) is downloaded to measure the disk space. |
 | 2. Terms of the workshop images | Three images are not open source. They are lent to you for the workshop only. | Shows the main points of the [terms](#terms-of-the-workshop-images) and asks if you accept them. | If you accept, you may use these images only for the workshop and you may not pass them on. If not, they are not downloaded. |
 | 3. Download the images | The images are large and the room network is slow. | Runs `docker pull` for each image of [`images.lock`](images.lock). Among them is *act*, which runs a GitHub Actions workflow on your computer in the last exercise, so you do not have to install it. | Docker uses about 8 GB of disk space more. |
-| 4. Prepare Gradle | The workshop compiles test scenarios with Gradle. The first build downloads a lot. | Builds a small project in [`warmup/`](warmup) with exactly the same tools and libraries as the workshop. | Up to 1 GB, in the folder `.gradle` of your home folder if you have Java, or in the Docker volume `workshop-gradle-cache` if you do not. |
+| 4. Prepare Gradle | The workshop compiles test scenarios with Gradle. The first build downloads a lot. | Builds a small project in [`warmup/`](warmup) with exactly the same tools and libraries as the workshop, in a container. If you have a Java, also starts the tiny project [`jdk/`](jdk), which downloads Gradle and Java 21 to your computer. | Up to 1 GB in the Docker volume `workshop-gradle-cache`; with a Java, about 400 MB more in the folder `.gradle` of your home folder. |
 | 5. Get the workshop repository | On the day, everything starts from it. | Downloads it next to this folder, on its start branch. If it is not published yet, it says so. | A folder `devopscon-munich-2026` next to this one, a few MB. |
 
 Each step is also a script of its own, which you can run alone:

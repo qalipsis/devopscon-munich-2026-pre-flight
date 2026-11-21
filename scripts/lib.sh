@@ -10,6 +10,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IMAGES_LOCK="$ROOT_DIR/images.lock"
 # shellcheck disable=SC2034
 WARMUP_DIR="$ROOT_DIR/warmup"
+# shellcheck disable=SC2034
+JDK_DIR="$ROOT_DIR/jdk"
 # Same volume as ./gate.sh of the workshop: what is downloaded here is found there.
 # shellcheck disable=SC2034
 GRADLE_CACHE_VOLUME=workshop-gradle-cache
@@ -53,6 +55,19 @@ host_path() {
 # Images of images.lock, of one kind: platform, sandbox or pipeline.
 images_of() {
   awk -v kind="$1" '$1 == kind { print $2 }' "$IMAGES_LOCK"
+}
+
+# On Linux, a container writes into a bind mount with its own user id: root, by default, which leaves files
+# you cannot delete. Prints the docker run arguments that make the container use your ids, and hands the
+# given volume over to them. Prints nothing elsewhere: Docker Desktop maps the ids by itself.
+container_user() {
+  local image="$1" volume="$2" uid gid
+  [[ "$(uname -s)" == Linux ]] || return 0
+  uid="$(id -u)"
+  gid="$(id -g)"
+  [[ "$uid" == 0 ]] && return 0
+  docker run --rm --user 0 -v "$volume:/volume" --entrypoint chown "$image" -R "$uid:$gid" /volume >/dev/null
+  printf '%s\n' --user "$uid:$gid" -e HOME=/tmp
 }
 
 # Major version of the java command, 0 when there is none.

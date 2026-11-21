@@ -6,8 +6,13 @@ set -uo pipefail
 source "$(dirname "$0")/lib.sh"
 
 MIN_MEMORY_GIB=5
-# Images, act, Gradle and the data of the sandbox during the workshop, with a margin.
+# Inside Docker: images, act, Gradle in a container and the data of the sandbox during the workshop, with a margin.
 MIN_DISK_GIB=15
+# Outside Docker, in MB. The workshop folder: the repository, its builds (up to 450 MB after a full
+# ./gradlew build) and the reports of the runs. In ~/.gradle, when Java is installed: Gradle and JDK 21,
+# prepared for Gradle on this computer (step 4, jdk/).
+WORKSHOP_FOLDER_MB=500
+GRADLE_HOME_MB=400
 # Ports the sandbox opens on this computer during the workshop.
 PORTS=(1313 5432 4317 4318 8080 8081 8082 8086 8400 9094 9308 16686)
 # Small image (about 2 MB) that measures the free disk space inside Docker.
@@ -73,6 +78,36 @@ check_disk() {
     ok "Free disk space for Docker: $gib GB."
   else
     failed "Docker has only $gib GB of free disk space. The workshop needs $MIN_DISK_GIB GB. Free some space: docker system prune"
+  fi
+}
+
+# Free MB and file system of the disk holding a folder (the nearest existing parent).
+free_space() {
+  local dir="$1"
+  while [[ ! -d "$dir" ]]; do dir="$(dirname "$dir")"; done
+  df -Pk "$dir" 2>/dev/null | awk 'NR == 2 { printf "%d %s\n", $4 / 1024, $1 }'
+}
+
+check_local_disk() {
+  local folder_free folder_fs home_free home_fs need
+  read -r folder_free folder_fs < <(free_space "$ROOT_DIR/..")
+  if [[ -z "$folder_free" ]]; then
+    note "The free disk space of this computer could not be measured. Make sure 1 GB is free, outside Docker."
+    return
+  fi
+  need="$WORKSHOP_FOLDER_MB"
+  if (($(java_major) >= 8)); then
+    read -r home_free home_fs < <(free_space "$HOME")
+    if [[ "$home_fs" == "$folder_fs" ]]; then
+      need=$((need + GRADLE_HOME_MB))
+    elif ((home_free < GRADLE_HOME_MB)); then
+      failed "Your home folder has only $home_free MB free. Gradle needs $GRADLE_HOME_MB MB there, in .gradle."
+    fi
+  fi
+  if ((folder_free >= need)); then
+    ok "Free disk space outside Docker: $((folder_free / 1024)) GB (the workshop needs up to $(awk -v m="$need" 'BEGIN { printf "%.1f", m / 1024 }') GB here)."
+  else
+    failed "Only $folder_free MB free outside Docker, next to this folder. The workshop needs $need MB there."
   fi
 }
 
@@ -148,6 +183,7 @@ main() {
     check_memory
     check_disk
   fi
+  check_local_disk
   check_ports
   check_servers
   check_powershell

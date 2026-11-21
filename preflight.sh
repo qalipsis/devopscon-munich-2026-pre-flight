@@ -95,9 +95,9 @@ step_check() {
   start_step "Check your computer"
   explain "Why" "The workshop runs everything on your computer, in Docker. This step finds problems"
   explain "" "now, at home, where you have time to fix them, and not in the room."
-  explain "What" "It checks Docker, Docker Compose, the memory and disk space of Docker, the network"
-  explain "" "ports the workshop uses, the connection to the servers of the next steps and, on"
-  explain "" "Windows, PowerShell."
+  explain "What" "It checks Docker, Docker Compose, the memory and disk space of Docker, the disk space"
+  explain "" "outside Docker, the network ports the workshop uses, the connection to the servers"
+  explain "" "of the next steps and, on Windows, PowerShell."
   explain "For you" "Nothing is installed and nothing is changed. Only one very small image (busybox,"
   explain "" "about 2 MB) is downloaded, to measure the free disk space."
   if confirm_step; then run_step "$ROOT_DIR/scripts/check.sh"; else record skipped; fi
@@ -169,14 +169,13 @@ step_gradle() {
   start_step "Prepare Gradle"
   explain "Why" "In the workshop, Gradle compiles the test scenarios. The first build downloads Gradle,"
   explain "" "Java 21 if it is missing, and the QALIPSIS libraries: $GRADLE_DISK."
-  explain "What" "It builds a small project that uses exactly the same tools and libraries."
+  explain "What" "It builds a small project that uses exactly the same tools and libraries, in a"
+  explain "" "container ($GRADLE_IMAGE), like the workshop. No Java needs to be installed."
+  explain "For you" "The files go to the Docker volume $GRADLE_CACHE_VOLUME ($GRADLE_DISK)."
   if (($(java_major) >= 8)); then
-    explain "For you" "You have Java $(java_major), so Gradle runs on your computer. The files go to the"
-    explain "" "folder .gradle in your home folder ($GRADLE_DISK). Java 21 is downloaded into that"
-    explain "" "folder if needed; it is not installed for the rest of your computer."
-  else
-    explain "For you" "You have no Java, so Gradle runs in a container ($GRADLE_IMAGE). The files go to"
-    explain "" "the Docker volume $GRADLE_CACHE_VOLUME ($GRADLE_DISK). Nothing is installed on your computer."
+    explain "" "You have Java $(java_major): Gradle and Java 21 are also downloaded into the folder"
+    explain "" ".gradle of your home folder (about 400 MB), for Gradle on your own computer. Java 21"
+    explain "" "is not installed for the rest of your computer."
   fi
   if confirm_step; then run_step "$ROOT_DIR/scripts/warmup.sh"; else record skipped; fi
 }
@@ -220,7 +219,8 @@ main() {
   printf '%sPreparing your computer for the workshop "From Green Build to Broken Peak"%s\n' "$BOLD" "$RESET"
   info "DevOpsCon Munich 2026"
   info ""
-  info "This takes 10 to 30 minutes, depending on your network, and needs about 9 GB of disk space."
+  info "This takes 10 to 30 minutes, depending on your network. The workshop needs 15 GB free inside Docker"
+  info "(about 9 GB are downloaded now) and up to 1 GB outside Docker, next to this folder."
   info "There are $TOTAL_STEPS steps. Before each step, you read why it is needed and what it does,"
   info "and you decide: run it, skip it, or stop. You can start this script again at any time."
 
