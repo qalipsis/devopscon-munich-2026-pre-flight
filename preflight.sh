@@ -144,14 +144,24 @@ step_terms() {
 
 step_pull() {
   start_step "Download the images"
-  explain "Why" "The workshop uses $(grep -vc '^#' "$IMAGES_LOCK") container images, $IMAGES_DISK in total. In the room,"
+  local total platform count
+  total="$(images_of sandbox; images_of pipeline; images_of platform)"
+  total="$(grep -c . <<<"$total")"
+  platform="$(images_of platform | grep -c .)"
+  count="$total"
+  [[ "$TERMS_ACCEPTED" == true ]] || count=$((total - platform))
+  explain "Why" "The workshop uses $total container images, $IMAGES_DISK in total. In the room,"
   explain "" "everybody shares one network, which is slow. At home it takes minutes; in the room,"
   explain "" "it can take most of the first exercise."
-  explain "What" "It downloads every image listed in images.lock with \"docker pull\". Among them is act,"
-  explain "" "the tool that runs GitHub workflows on your computer at the end of the workshop."
-  if [[ "$TERMS_ACCEPTED" == false ]]; then
-    explain "" "The three workshop platform images are left out: you did not accept their terms."
+  if [[ "$TERMS_ACCEPTED" == true ]]; then
+    explain "What" "It downloads the $count images listed in images.lock with \"docker pull\". Among them is act,"
+  else
+    explain "Note" "You did not accept the terms: the $platform workshop platform images are left out, and"
+    explain "" "without them you cannot do the exercises. To get them later, accept the terms with:"
+    explain "" "  scripts/pull.sh --accept-terms"
+    explain "What" "It downloads the other $count images of images.lock with \"docker pull\". Among them is act,"
   fi
+  explain "" "the tool that runs GitHub workflows on your computer at the end of the workshop."
   explain "For you" "Docker uses $IMAGES_DISK of disk space more. After the workshop, you can"
   explain "" "delete the images: see README.md, section \"After the workshop\"."
   if confirm_step; then
@@ -203,6 +213,7 @@ finish() {
     info "Some steps were skipped or failed. Run ./preflight.sh again before the workshop."
   elif [[ "$TERMS_ACCEPTED" == false ]]; then
     info "Everything is ready, except the three workshop platform images, whose terms you did not accept."
+    info "Without them you cannot do the exercises. To get them: scripts/pull.sh --accept-terms"
   else
     info "${GREEN}Your computer is ready for the workshop.${RESET} Keep the images until the workshop."
   fi
