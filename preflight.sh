@@ -177,10 +177,11 @@ step_pull() {
 
 step_gradle() {
   start_step "Prepare Gradle"
-  explain "Why" "In the workshop, Gradle compiles the test scenarios. The first build downloads Gradle,"
-  explain "" "Java 21 if it is missing, and the QALIPSIS libraries: $GRADLE_DISK."
-  explain "What" "It builds a small project that uses exactly the same tools and libraries, in a"
-  explain "" "container ($GRADLE_IMAGE), like the workshop. No Java needs to be installed."
+  explain "Why" "In the workshop, Gradle compiles and runs the test scenarios in a Java container"
+  explain "" "($GRADLE_IMAGE). You do not need Java on your computer: if you have none, do not"
+  explain "" "install it. The first build downloads Gradle and the QALIPSIS libraries: $GRADLE_DISK."
+  explain "What" "It builds a small project that uses exactly the same tools and libraries, in the"
+  explain "" "same container as on the day."
   explain "For you" "The files go to the Docker volume $GRADLE_CACHE_VOLUME ($GRADLE_DISK)."
   if (($(java_major) >= 8)); then
     explain "" "You have Java $(java_major): Gradle and Java 21 are also downloaded into the folder"
