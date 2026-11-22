@@ -5,7 +5,9 @@
 export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL='*'
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# In Git Bash, "pwd -W" writes "C:/Users/..." instead of "/c/Users/...": every path built from ROOT_DIR is then
+# one that Docker and Git for Windows understand, since the rewriting above is off. Elsewhere, plain pwd.
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && { pwd -W 2>/dev/null || pwd; })"
 # shellcheck disable=SC2034  # used by the step scripts
 IMAGES_LOCK="$ROOT_DIR/images.lock"
 # shellcheck disable=SC2034
