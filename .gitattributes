@@ -1,6 +1,7 @@
-# Line endings fixed per file type, whatever core.autocrlf says on the attendee's machine:
-# a shell script checked out with CRLF fails in Git Bash and WSL2, a .bat with LF misbehaves in cmd.
-* text=auto
+# Line endings fixed per file type, whatever core.autocrlf says on the attendee's machine. Text is LF: the
+# files are read by Bash, awk, Docker and Hugo in Linux containers, which take a CRLF as part of the text
+# (a shell script fails, a front matter is not found, a value ends with \r). Windows scripts keep CRLF.
+* text=auto eol=lf
 *.sh text eol=lf
 gradlew text eol=lf
 *.bat text eol=crlf
