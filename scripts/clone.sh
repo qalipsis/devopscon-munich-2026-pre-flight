@@ -19,9 +19,10 @@ main() {
   command -v git >/dev/null 2>&1 || die "Git is not installed. Install it, then run this step again."
   title "Getting the workshop repository"
 
+  # Git for Windows does not know "/c/Users/...", and lib.sh stops Git Bash from rewriting it: give it "C:/Users/...".
   if [[ -d "$target/.git" ]]; then
     target="$(cd "$target" && pwd)"
-    if git -C "$target" fetch --quiet --tags origin 2>/dev/null; then
+    if git -C "$(host_path "$target")" fetch --quiet --tags origin 2>/dev/null; then
       ok "Already here, and up to date with the server: $target"
     else
       note "Already here: $target. It could not be updated now; it will be on the day."
@@ -29,9 +30,9 @@ main() {
   elif ! git ls-remote --quiet --exit-code "$WORKSHOP_REPOSITORY" HEAD >/dev/null 2>&1; then
     note "The workshop repository is not published yet. It will be on the day: run scripts/clone.sh again then."
     return 0
-  elif git clone --quiet "$WORKSHOP_REPOSITORY" "$target"; then
+  elif git clone --quiet "$WORKSHOP_REPOSITORY" "$(host_path "$target")" && [[ -d "$target/.git" ]]; then
     target="$(cd "$target" && pwd)"
-    ok "Downloaded to $target, on the branch $(git -C "$target" branch --show-current)."
+    ok "Downloaded to $target, on the branch $(git -C "$(host_path "$target")" branch --show-current)."
   else
     fail "The download failed. Check your network and run this step again."
     return 1
