@@ -1,10 +1,8 @@
 # For PowerShell on Windows. The pre-flight and the workshop are Bash scripts: this script does not run them,
 # it says how to start them in Git Bash, and how to install Git Bash when it is missing.
 #
-#   .\preflight.ps1
-#
-# If Windows refuses to run scripts:
-#   powershell -ExecutionPolicy Bypass -File .\preflight.ps1
+#   .\preflight.cmd       from PowerShell or cmd: Windows blocks .ps1 files by default, preflight.cmd does not
+#   .\preflight.ps1       where running scripts is allowed
 
 $GitForWindows = 'https://git-scm.com/download/win'
 

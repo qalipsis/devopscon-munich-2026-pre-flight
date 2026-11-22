@@ -47,7 +47,7 @@ cd devopscon-munich-2026-pre-flight
 ./preflight.sh
 ```
 
-On Windows, run these commands in **Git Bash**, not in PowerShell. Started from PowerShell, `.\preflight.ps1`
+On Windows, run these commands in **Git Bash**, not in PowerShell. Started from PowerShell, `.\preflight.cmd`
 says how to start the pre-flight in Git Bash, and how to install Git Bash if it is missing.
 
 The script has five steps. Before each step, it explains **why** the step is needed, **what** it does,
