@@ -4,10 +4,10 @@ sandbox apache/kafka-native:4.1.2
 sandbox apache/kafka:4.1.2
 sandbox danielqsj/kafka-exporter:v1.11.0
 sandbox ghcr.io/gohugoio/hugo@sha256:7bb99a126eddeea8fbfaacedc5ef6708805411bdeaa01e668405a137fd02d048
-platform ghcr.io/qalipsis/workshop-platform-chaos-board@sha256:91ee7c0a5ab4d5138286463eb4500b70c7d1dd43777b57ace3bd603bc06be6c9
+platform ghcr.io/qalipsis/workshop-platform-chaos-board@sha256:370ed45c409cd04662f11821acade21181f2a7796ecdcfa28f7dbed9bf130909
 platform ghcr.io/qalipsis/workshop-platform-ingest@sha256:75c1a9e9babb4eab6ccc1386363448e593627affced06a3627dbff10ed490aa8
 platform ghcr.io/qalipsis/workshop-platform-persister@sha256:ff49f6dff936a580b23b99f2ad8814d3d4c2b2bf11d058e6306aa8ebabf2fb4c
-sandbox ghcr.io/qalipsis/workshop-platform-qalipsis@sha256:a89e0b93677dcfaced6ba3597c83691d1d006455c00638bc9fdeb15bca10e25f
+sandbox ghcr.io/qalipsis/workshop-platform-qalipsis@sha256:9e907788b90509f6d1c09f1ebad7a39f36f4f65a1a5ac84a50974361e75a3858
 sandbox influxdb:2.7
 sandbox jaegertracing/jaeger:2.23.0
 sandbox postgres:18
