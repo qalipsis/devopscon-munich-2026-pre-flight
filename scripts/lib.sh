@@ -5,6 +5,14 @@
 export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL='*'
 
+# Numbers with a dot, whatever the language of the computer: with a French or German locale, awk (mawk on Ubuntu)
+# writes 13,5, and the next comparison reads it as text. LC_ALL would win over LC_NUMERIC, so it becomes LANG.
+if [[ -n "${LC_ALL:-}" ]]; then
+  export LANG="$LC_ALL"
+  unset LC_ALL
+fi
+export LC_NUMERIC=C
+
 # In Git Bash, "pwd -W" writes "C:/Users/..." instead of "/c/Users/...": every path built from ROOT_DIR is then
 # one that Docker and Git for Windows understand, since the rewriting above is off. Elsewhere, plain pwd.
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && { pwd -W 2>/dev/null || pwd; })"
